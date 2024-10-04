@@ -1,26 +1,31 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { useState, useEffect } from "react";
+import { IUser } from "./IUser";
+import { getDataPromise } from "./getDataPromise";
+import { Card } from "./Card";
+import "./App.css";
 
-function App() {
+const App: React.FC = () => {
+  const limit = 2;
+  const [skip, setSkip] = useState(0);
+  const [users, setUsers] = useState<IUser[]>([]);
+  const onClick = () => {
+    getDataPromise((receivedUsers: IUser[]) => {
+      //setSkip(skip + limit);
+      setSkip((skip) => skip + limit);
+      //setUsers([...users, ...receivedUsers]);
+      setUsers((users) => [...users, ...receivedUsers]);
+    })(skip, limit);
+  };
+  // eslint-disable-next-line
+  useEffect(onClick, []);
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      {users.map((user: IUser, key: number) => (
+        <Card click={onClick} user={user} key={key.toString()} />
+      ))}
     </div>
   );
-}
+};
 
 export default App;
